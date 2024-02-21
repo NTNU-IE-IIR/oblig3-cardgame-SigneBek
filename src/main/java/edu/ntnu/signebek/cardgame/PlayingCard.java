@@ -1,4 +1,4 @@
-package edu.ntnu.signebek;
+package edu.ntnu.signebek.cardgame;
 
 /**
  * Represents a playing card. A playing card has a number (face) between
@@ -30,7 +30,6 @@ public class PlayingCard {
     if (suit != 'H' && suit != 'D' && suit != 'C' && suit != 'S') {
       throw new IllegalArgumentException("Parameter suit must be one of H, D, C or S");
     }
-
     if (face < 1 || face > 13) {
       throw new IllegalArgumentException("Parameter face must be a number between 1 to 13");
     }

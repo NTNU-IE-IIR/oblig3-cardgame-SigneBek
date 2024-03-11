@@ -45,6 +45,7 @@ public class PlayingCard {
    * @return the suit and face of the card as a string
    */
   public String getAsString() {
+
     return String.format("%s%s", suit, face);
   }
 
@@ -55,6 +56,7 @@ public class PlayingCard {
    * @return the suit of the card
    */
   public char getSuit() {
+
     return suit;
   }
 
@@ -64,6 +66,7 @@ public class PlayingCard {
    * @return the face of the card
    */
   public int getFace() {
+
     return face;
   }
 

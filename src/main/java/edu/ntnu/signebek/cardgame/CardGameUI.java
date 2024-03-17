@@ -29,26 +29,28 @@ public class CardGameUI extends Application {
   private ImageView card4;
   private ImageView card5;
 
-  private Label sumFaces;
-  private Label cardsHearts;
-  private Label flush;
-  private Label queenSpades;
+  private Label sumFaces= new Label("-");
+  private Label cardsHearts= new Label("-");
+  private Label flush= new Label("-");
+  private Label queenSpades= new Label("-");
 
   private CardGameController controller;
 
   @Override
   public void start(Stage stage) {
+    //TODO make an css file for this mess
     this.controller = new CardGameController(this);
 
     BorderPane rootNode = new BorderPane();
     VBox centerPane=setCenterPane();
 
     rootNode.setCenter(centerPane);
-    rootNode.setBackground(new Background(new BackgroundFill(Color.DARKGREEN, null, null)));
+    rootNode.getStyleClass().add("root");
 
     Screen screen = Screen.getPrimary();
     Rectangle2D bounds = screen.getVisualBounds();
     Scene scene = new Scene(rootNode, bounds.getMaxX()-200, bounds.getMaxY()-100);
+    scene.getStylesheets().add(getClass().getResource("/css/stylesheet.css").toExternalForm());
     stage.setScene(scene);
     stage.setTitle("Card Game");
     stage.show();
@@ -88,8 +90,14 @@ public class CardGameUI extends Application {
       dealHandButton.setOnAction((event)->
          controller.dealHand()
           );
+      dealHandButton.getStyleClass().add("buttons");
 
       Button checkHandButton = new Button("Check hand");
+      checkHandButton.setOnAction((event)->
+                                     controller.checkHand()
+      );
+      checkHandButton.getStyleClass().add("buttons");
+
 
       VBox buttonsHands = new VBox(dealHandButton, checkHandButton);
       buttonsHands.setAlignment(Pos.CENTER);
@@ -98,11 +106,7 @@ public class CardGameUI extends Application {
 
       VBox bottomCenterPane=setBottomPane();
       topCenterPane.getChildren().addAll(card1,card2,card3,card4,card5,buttonsHands);
-      topCenterPane.setPadding(new Insets(10));
-      topCenterPane.setAlignment(Pos.CENTER_LEFT);
-      topCenterPane.setSpacing(30);
-      topCenterPane.setMinHeight(500);
-      topCenterPane.setBackground(new Background(new BackgroundFill(Color.FORESTGREEN, null, null)));
+      topCenterPane.getStyleClass().add("topCenterPane");
       centerPane.getChildren().addAll(topCenterPane,bottomCenterPane);
 
 
@@ -117,28 +121,20 @@ public class CardGameUI extends Application {
     try {
 
       Text sumFacesT = new Text("Sum of the faces: ");
-      sumFacesT.setFont(Font.font(15));
-      sumFaces = new Label("-");
       HBox one = new HBox(sumFacesT,sumFaces);
-      one.setAlignment(Pos.TOP_CENTER);
+      one.getStyleClass().add("text-for-check");
 
       Text cardsHeartsT = new Text("Cards of hearts: ");
-      cardsHeartsT.setFont(Font.font(15));
-      cardsHearts = new Label("-");
       HBox two = new HBox(cardsHeartsT,cardsHearts);
-      two.setAlignment(Pos.TOP_CENTER);
+      two.getStyleClass().add("text-for-check");
 
       Text flushT = new Text("Flush: ");
-      flushT.setFont(Font.font(15));
-      flush = new Label("-");
       HBox three = new HBox(flushT,flush);
-      three.setAlignment(Pos.TOP_CENTER);
+      three.getStyleClass().add("text-for-check");
 
       Text queenSpadesT = new Text("Queen of spades?: ");
-      queenSpadesT.setFont(Font.font(15));
-      queenSpades = new Label("-");
       HBox four = new HBox(queenSpadesT,queenSpades);
-      four.setAlignment(Pos.TOP_CENTER);
+      four.getStyleClass().add("text-for-check");
 
       bottomPane.getChildren().addAll(one, two, three, four);
       bottomPane.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
@@ -155,14 +151,20 @@ public class CardGameUI extends Application {
  }
 
  public void dealHand(ArrayList<PlayingCard> hand){
-    ArrayList<String> cardsOnHand=new ArrayList<>();
-    ArrayList<String> pathToFileCard = new ArrayList<>();
-    for (int i=0; i <hand.size();i++){
-      cardsOnHand.add(hand.get(i).getAsString());
-      pathToFileCard.add("/cards/"+hand.get(i).getAsString()+".png");
+   ArrayList<String> cardsOnHand=new ArrayList<>();
+   ArrayList<String> pathToFileCard = new ArrayList<>();
+
+   if (!(hand.isEmpty())){
+      for (int i=0; i <hand.size();i++){
+        cardsOnHand.add(hand.get(i).getAsString());
+        pathToFileCard.add("/cards/"+hand.get(i).getAsString()+".png");
+      }
+    } else {
+     for (int i=0; i <5;i++){
+       pathToFileCard.add("/cards/back.png");
+     }
     }
-    System.out.println(cardsOnHand);
-    System.out.println(pathToFileCard);
+   //TODO refactor this shit
     this.card1.setImage(
         new ImageView(getClass().getResource(pathToFileCard.get(0)).toExternalForm()).getImage());
    this.card2.setImage(
@@ -176,7 +178,34 @@ public class CardGameUI extends Application {
 
  }
 
+ public void checkHand(ArrayList<String> heartsOnHand, int sumOfFaces,boolean flush, boolean queenOfSpades){
+   this.sumFaces.setText(String.valueOf(sumOfFaces));
+
+   if (!heartsOnHand.isEmpty()){
+     this.cardsHearts.setText(String.valueOf(heartsOnHand));
+   } else{
+     this.cardsHearts.setText("None");
+   }
+   String flushCheck = "No";
+   if (flush){
+     flushCheck="Yes";
+   }
+   this.flush.setText(flushCheck);
+   String S12 = "No";
+   if (queenOfSpades){
+     S12="Yes";
+   }
+   this.queenSpades.setText(S12);
+ }
+ public void setLabelBlank(){
+   sumFaces.setText("-");
+   cardsHearts.setText("-");
+   flush.setText("-");
+   queenSpades.setText("-");
+ }
+
  public static void appMain(String[] args){
+
     launch();
   }
 
